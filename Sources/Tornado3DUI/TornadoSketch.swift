@@ -12,7 +12,7 @@ import SwiftUI
 
 public class TornadoSketch: Sketch, ObservableObject {
     
-    var onCardReset: (() -> (Any, TornadoImageLoadingType))
+    public var onCardReset: (() -> (Any, TornadoImageLoadingType))
     
     private var cancellables = Set<AnyCancellable>()
     
