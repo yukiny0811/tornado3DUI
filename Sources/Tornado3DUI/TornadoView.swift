@@ -7,4 +7,4 @@
 
 import SwiftyCreatives
 
-typealias TornadoView = ConfigurableSketchView<TornadoCameraConfig, MainDrawConfig>
+public typealias TornadoView = ConfigurableSketchView<TornadoCameraConfig, MainDrawConfig>

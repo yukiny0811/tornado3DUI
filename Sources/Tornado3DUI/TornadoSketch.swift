@@ -10,24 +10,25 @@ import CoreGraphics
 import Combine
 import SwiftUI
 
-class TornadoSketch: Sketch, ObservableObject {
+public class TornadoSketch: Sketch, ObservableObject {
     
-    var onCardReset: (() -> (Any, CGImage))
+    var onCardReset: (() -> (Any, TornadoImageLoadingType))
     
     private var cancellables = Set<AnyCancellable>()
     
-    @Published var selectedId: Any?
-    @Published var someCardSelected: Bool = false
+    @Published public var selectedId: Any?
+    @Published public var someCardSelected: Bool = false
     
     private var isTap = true
     
-    var oneCycleHeight: Float
-    var oneCycleCardCount: Int
-    var cycleCount: Int
-    var cycleRadius: Float
-    var touchYMultiplier: Float = 0.01
-    var touchXMultiplier: Float = 0.01
-    var cameraDistance: Float = 20
+    public var oneCycleHeight: Float
+    public var oneCycleCardCount: Int
+    public var cycleCount: Int
+    public var cycleRadius: Float
+    public var touchYMultiplier: Float = 0.01
+    public var touchXMultiplier: Float = 0.01
+    public var cameraDistance: Float = 20
+    public var rotationSpeedMultiplier: Float = 1
     var cardHeight: Float {
         oneCycleHeight / Float(oneCycleCardCount)
     }
@@ -35,7 +36,7 @@ class TornadoSketch: Sketch, ObservableObject {
         cycleCount * oneCycleCardCount
     }
     var cards: [TornadoCard] = []
-    init(
+    public init(
         oneCycleHeight: Float = 32,
         oneCycleCardCount: Int = 8,
         cycleCount: Int = 3,
@@ -43,7 +44,8 @@ class TornadoSketch: Sketch, ObservableObject {
         touchYMultiplier: Float = 0.01,
         touchXMultiplier: Float = 0.01,
         cameraDistance: Float = 20,
-        cardResetProcess: @escaping () -> (Any, CGImage)
+        rotationSpeedMultiplier: Float = 1,
+        cardResetProcess: @escaping () -> (Any, TornadoImageLoadingType)
     ) {
         self.oneCycleHeight = oneCycleHeight
         self.oneCycleCardCount = oneCycleCardCount
@@ -52,6 +54,7 @@ class TornadoSketch: Sketch, ObservableObject {
         self.touchYMultiplier = touchYMultiplier
         self.touchXMultiplier = touchXMultiplier
         self.cameraDistance = cameraDistance
+        self.rotationSpeedMultiplier = rotationSpeedMultiplier
         onCardReset = cardResetProcess
         super.init()
         for i in 0..<oneCycleCardCount * cycleCount {
@@ -61,7 +64,7 @@ class TornadoSketch: Sketch, ObservableObject {
             cards.append(card)
         }
     }
-    func resetAll() {
+    public func resetAll() {
         let task = Task.detached {
             for c in self.cards {
                 await c.reset(resetFunc: self.onCardReset)
@@ -69,10 +72,15 @@ class TornadoSketch: Sketch, ObservableObject {
         }
         cancellables.insert(.init { task.cancel() })
     }
-    override func setupCamera(camera: some MainCameraBase) {
+    public override func setupCamera(camera: some MainCameraBase) {
         camera.setTranslate(0, 0, -cameraDistance)
     }
-    override func draw(encoder: SCEncoder) {
+    public override func update(camera: some MainCameraBase) {
+        for c in cards {
+            c.height -= deltaTime * rotationSpeedMultiplier
+        }
+    }
+    public override func draw(encoder: SCEncoder) {
         translate(0, -Float(cycleCount) * oneCycleHeight / 2, 0)
         for c in cards {
             pushMatrix()
@@ -84,7 +92,7 @@ class TornadoSketch: Sketch, ObservableObject {
             popMatrix()
         }
     }
-    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?, camera: some MainCameraBase, view: UIView) {
+    public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?, camera: some MainCameraBase, view: UIView) {
         isTap = false
         let touch = touches.first!
         let delta = touch.location(in: view) - touch.previousLocation(in: view)
@@ -108,7 +116,7 @@ class TornadoSketch: Sketch, ObservableObject {
             }
         }
     }
-    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?, camera: some MainCameraBase, view: UIView) {
+    public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?, camera: some MainCameraBase, view: UIView) {
         let touch = touches.first!
         let pos = touch.location(in: view)
         let ray = camera.screenToWorldDirection(

@@ -7,10 +7,10 @@
 
 import SwiftyCreatives
 
-class TornadoCameraConfig: CameraConfigBase {
-    static var fov: Float = 85
-    static var near: Float = 0.01
-    static var far: Float = 100
-    static var easyCameraType: SwiftyCreatives.EasyCameraType = .manual
-    static var isPerspective: Bool = true
+public class TornadoCameraConfig: CameraConfigBase {
+    public static var fov: Float = 85
+    public static var near: Float = 0.01
+    public static var far: Float = 100
+    public static var easyCameraType: SwiftyCreatives.EasyCameraType = .manual
+    public static var isPerspective: Bool = true
 }
