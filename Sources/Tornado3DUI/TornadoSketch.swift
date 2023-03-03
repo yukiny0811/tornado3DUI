@@ -76,6 +76,7 @@ public class TornadoSketch: Sketch, ObservableObject {
         camera.setTranslate(0, 0, -cameraDistance)
     }
     public override func update(camera: some MainCameraBase) {
+        if someCardSelected { return }
         for c in cards {
             c.height -= deltaTime * rotationSpeedMultiplier
         }
@@ -93,6 +94,7 @@ public class TornadoSketch: Sketch, ObservableObject {
         }
     }
     public override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?, camera: some MainCameraBase, view: UIView) {
+        if someCardSelected { return }
         isTap = false
         let touch = touches.first!
         let delta = touch.location(in: view) - touch.previousLocation(in: view)
@@ -117,6 +119,7 @@ public class TornadoSketch: Sketch, ObservableObject {
         }
     }
     public override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?, camera: some MainCameraBase, view: UIView) {
+        if someCardSelected { return }
         let touch = touches.first!
         let pos = touch.location(in: view)
         let ray = camera.screenToWorldDirection(
