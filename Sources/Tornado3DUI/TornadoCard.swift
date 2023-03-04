@@ -12,8 +12,8 @@ class TornadoCard {
     var height: Float = 0
     let img = HitTestableImg()
     var id: Any?
-    func reset(resetFunc: () -> (Any, TornadoImageLoadingType)) async {
-        let (idRaw, type) = resetFunc()
+    func reset(resetFunc: () async -> (Any, TornadoImageLoadingType)) async {
+        let (idRaw, type) = await resetFunc()
         id = idRaw
         switch type {
         case .cgImage(let cgImage):

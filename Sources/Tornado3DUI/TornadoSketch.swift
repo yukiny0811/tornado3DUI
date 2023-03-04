@@ -12,7 +12,7 @@ import SwiftUI
 
 public class TornadoSketch: Sketch, ObservableObject {
     
-    public var onCardReset: (() -> (Any, TornadoImageLoadingType))
+    public var onCardReset: (() async -> (Any, TornadoImageLoadingType))
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -45,7 +45,7 @@ public class TornadoSketch: Sketch, ObservableObject {
         touchXMultiplier: Float = 0.01,
         cameraDistance: Float = 20,
         rotationSpeedMultiplier: Float = 1,
-        cardResetProcess: @escaping () -> (Any, TornadoImageLoadingType)
+        cardResetProcess: @escaping () async -> (Any, TornadoImageLoadingType)
     ) {
         self.oneCycleHeight = oneCycleHeight
         self.oneCycleCardCount = oneCycleCardCount
